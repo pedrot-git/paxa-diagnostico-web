@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c121b">
+  <meta name="description" content="Diagnóstico Bluetooth LE do PAXA Ai Friend Pro pelo Chrome no Android.">
+  <title>PAXA Lab — Diagnóstico Bluetooth</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">▥</span>PAXA <span class="brand-muted">/ LAB</span></a><span class="tag">DIAGNÓSTICO WEB</span></header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">AI FRIEND PRO · BLUETOOTH LE</p>
+        <h1>Seu fone.<br>Uma conexão mais <span>clara.</span></h1>
+        <p class="intro">Investigue a conexão da caixinha pelo navegador. Conecte, teste os modos na tela do fone e leve o relatório para a nossa conversa.</p>
+        <div class="hero-meta"><span>Sem instalar app</span><span>Dados no seu navegador</span></div>
+      </div>
+      <div class="device-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="earbud left"></div><div class="earbud right"></div><div class="case"><div class="case-top"></div><div class="case-display"><span class="tiny-time">PAXA / LAB</span><div class="waves"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="tiny-caption">CONEXÃO EM FOCO</span></div><div class="case-led"></div></div><span class="art-label">PRONTO PARA EXPLORAR</span></div>
+    </section>
+
+    <section class="compatibility" id="compatibility" role="status"><span class="status-dot"></span><div><strong id="compat-title">Verificando o navegador…</strong><p id="compat-description">Use o Chrome no Samsung A56 e o endereço HTTPS deste site.</p></div></section>
+
+    <div class="workspace">
+      <section class="panel connection-panel" aria-labelledby="connect-title">
+        <div class="section-heading"><span class="step">01</span><div><p class="eyebrow">COMECE POR AQUI</p><h2 id="connect-title">Conecte seu dispositivo</h2></div></div>
+        <p class="body-copy">Ligue o Bluetooth, retire os fones da caixa e acenda a telinha. Se não aparecerem, desconecte-os temporariamente do notebook.</p>
+        <button id="connect" class="button button-primary"><span aria-hidden="true">⌁</span> Selecionar fone e diagnosticar</button>
+        <button id="disconnect" class="button button-secondary" disabled>Encerrar sessão</button>
+        <p class="small-note">O Chrome abre uma lista de dispositivos BLE. A conexão de áudio Bluetooth pode aparecer com outra entrada ou não aparecer nessa lista.</p>
+
+        <details id="advanced">
+          <summary>Serviços adicionais e relatório do APK <span aria-hidden="true">+</span></summary>
+          <div class="advanced-content">
+            <p>Por padrão, o site pede acesso aos serviços de bateria e informações do dispositivo. Para examinar serviços proprietários, informe os UUIDs descobertos no fone.</p>
+            <label for="uuids">UUIDs adicionais de serviços</label>
+            <textarea id="uuids" rows="3" placeholder="Um UUID por linha, ou separados por vírgula" spellcheck="false" autocapitalize="off"></textarea>
+            <p class="small-note">Depois de mudar os UUIDs, selecione o fone novamente para autorizar os novos serviços.</p>
+            <label class="file-button" for="import-report">Importar UUIDs de um relatório JSON<input type="file" id="import-report" accept=".json,application/json"></label>
+            <p id="import-status" class="small-note" role="status"></p>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel session-panel" aria-labelledby="session-title">
+        <div class="section-heading"><span class="step">02</span><div><p class="eyebrow">ACOMPANHE A CONEXÃO</p><h2 id="session-title">Sua sessão</h2></div><span class="session-badge" id="phase">EM ESPERA</span></div>
+        <div class="device-info"><div class="device-symbol" aria-hidden="true">▥</div><div><strong id="device-name">Nenhum dispositivo selecionado</strong><p id="device-caption">O dispositivo escolhido aparecerá aqui.</p></div></div>
+        <p id="session-status" class="session-status" aria-live="polite">Pronto para começar.</p>
+        <div class="metrics"><div><strong id="services-count">0</strong><span>serviços acessíveis</span></div><div><strong id="characteristics-count">0</strong><span>características</span></div><div><strong id="notifications-count">0</strong><span>notificações</span></div></div>
+        <div class="service-list" id="service-list"><p class="empty-state">Os serviços autorizados aparecerão após o diagnóstico.</p></div>
+      </section>
+
+      <section class="panel markers-panel" aria-labelledby="markers-title">
+        <div class="section-heading"><span class="step">03</span><div><p class="eyebrow">TESTE A CAIXINHA</p><h2 id="markers-title">Marque cada mudança</h2></div></div>
+        <p class="body-copy">Mude um modo na telinha e toque no marcador correspondente. Espere alguns segundos entre os testes.</p>
+        <div class="marker-grid">
+          <button class="marker" data-marker="Usuário ativou o cancelamento de ruído na caixinha."><span aria-hidden="true">◉</span><strong>Cancelamento de ruído</strong><small>Marcar que ativei</small></button>
+          <button class="marker" data-marker="Usuário ativou o modo ambiente na caixinha."><span aria-hidden="true">◎</span><strong>Modo ambiente</strong><small>Marcar que ativei</small></button>
+          <button class="marker" data-marker="Usuário desativou o controle de ruído na caixinha."><span aria-hidden="true">○</span><strong>Controle de ruído desligado</strong><small>Marcar que desativei</small></button>
+        </div>
+        <form id="custom-marker"><label for="marker-text">Outro teste</label><div class="inline-form"><input id="marker-text" maxlength="300" placeholder="Ex.: mudei o equalizador para graves"><button class="button button-secondary" type="submit">Registrar</button></div></form>
+        <p class="small-note">Use somente os modos existentes no seu fone. Os botões registram o que você fez; esta versão ainda não altera os modos.</p>
+      </section>
+
+      <section class="panel export-panel" aria-labelledby="export-title">
+        <div class="section-heading"><span class="step">04</span><div><p class="eyebrow">LEVE OS RESULTADOS</p><h2 id="export-title">Compartilhe o diagnóstico</h2></div></div>
+        <p class="body-copy">Baixe o relatório e anexe aqui na conversa para investigarmos os comandos do seu fone. Um teste parcial também ajuda.</p>
+        <button id="download-json" class="button button-primary">↓ Baixar relatório JSON</button>
+        <div class="export-options"><button id="download-text" class="text-button">Baixar em texto</button><button id="share" class="text-button">Compartilhar arquivos</button></div>
+        <div class="privacy-note"><span aria-hidden="true">◇</span><p>Sem envio automático. O GitHub hospeda o site; os resultados ficam no seu navegador até você escolher compartilhá-los.</p></div>
+      </section>
+    </div>
+
+    <section class="panel log-panel" aria-labelledby="log-title"><div class="section-heading"><span class="live-dot" aria-hidden="true"></span><h2 id="log-title">Registro da sessão</h2><span id="event-count" class="log-count">0 eventos</span></div><ol id="event-list"><li class="empty-state">Os eventos do diagnóstico aparecerão aqui.</li></ol></section>
+
+    <aside class="limits"><h3>O alcance deste teste</h3><p>O navegador acessa apenas serviços BLE previamente autorizados. Ele não examina a conexão de áudio Bluetooth clássica nem intercepta a comunicação entre caixinha e fones. Nenhum serviço encontrado não significa que o fone não tenha outras interfaces.</p></aside>
+  </main>
+  <footer><span class="brand">PAXA <span class="brand-muted">/ LAB</span></span><p>Diagnóstico independente · v1.0.0 · Chrome no Android</p></footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
