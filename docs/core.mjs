@@ -42,10 +42,16 @@ export function readBytes(value) {
   };
 }
 
+export function filterSessionEvents(events, filter = 'all') {
+  if (filter === 'markers') return events.filter(event => event.kind === 'user_marker');
+  if (filter === 'errors') return events.filter(event => /error|timeout|unavailable|disconnected/.test(event.kind));
+  return [...events];
+}
+
 function initialReport(userAgent) {
   return {
-    schemaVersion: 1, source: 'paxa-web', appVersion: '1.0.0', startedAt: new Date().toISOString(),
-    browser: { userAgent }, services: [], events: [], droppedEvents: 0,
+    schemaVersion: 1, source: 'paxa-web', appVersion: '1.1.0', startedAt: new Date().toISOString(),
+    browser: { userAgent }, services: [], events: [], droppedEvents: 0, notificationCount: 0,
     limitations: [
       'Somente Bluetooth LE/GATT, nos serviços autorizados pelo navegador; não consulta SDP nem a conexão de áudio Bluetooth clássica.',
       'O ID do navegador não é o endereço MAC do fone.',
@@ -78,7 +84,7 @@ export class BluetoothDiagnostics {
     this.device = null;
     this.listeners = [];
     this.disconnectListener = null;
-    this.notificationCount = 0;
+    this.notificationCount = Number.isSafeInteger(this.report.notificationCount) ? this.report.notificationCount : this.report.events.filter(event => event.kind === 'notification').length;
     this.savePending = false;
   }
   get supported() { return this.secureContext && typeof this.bluetooth?.requestDevice === 'function'; }
@@ -190,6 +196,7 @@ export class BluetoothDiagnostics {
             const listener = event => {
               if (token !== this.generation) return;
               this.notificationCount++;
+              this.report.notificationCount = this.notificationCount;
               this.record('notification', `Evento recebido de ${characteristic.uuid}.`, { service: service.uuid, characteristic: characteristic.uuid, ...readBytes(event.target.value) });
             };
             characteristic.addEventListener('characteristicvaluechanged', listener);
@@ -228,7 +235,7 @@ export class BluetoothDiagnostics {
   json() { return JSON.stringify(this.report, null, 2); }
   text() {
     return [
-      'PAXA DIAGNÓSTICO WEB · 1.0.0',
+      `PAXA DIAGNÓSTICO WEB · ${this.report.appVersion}`,
       `Início: ${this.report.startedAt}`,
       `Navegador: ${this.report.browser.userAgent}`,
       `Dispositivo: ${JSON.stringify(this.report.device ?? null)}`,

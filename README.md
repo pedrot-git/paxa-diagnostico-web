@@ -9,7 +9,7 @@ O site está em `docs/`. Ative GitHub Pages a partir da branch `main`, pasta `/d
 ## Uso no A56
 
 1. Abra o endereço **HTTPS** do site no **Chrome**, com o Bluetooth ligado. Retire os fones da caixa e acenda a telinha.
-2. Toque em **Selecionar fone e diagnosticar** e escolha o fone ou a caixinha na lista BLE do Chrome.
+2. Toque em **Conectar meu fone** e escolha o fone ou a caixinha na lista BLE do Chrome.
 3. Se não aparecerem, desconecte-os temporariamente do notebook. A entrada de áudio Bluetooth pode não ser uma entrada BLE acessível ao site.
 4. Depois do diagnóstico, alterne os modos existentes na telinha e use os marcadores do site para registrar cada mudança.
 5. Toque em **Baixar relatório JSON** e anexe o arquivo na conversa. Também é possível baixar em texto ou compartilhar os dois arquivos pelo menu do Android.
@@ -37,3 +37,7 @@ node --test tests/*.test.mjs
 Os testes simulam periféricos e cobrem leituras, notificações, callbacks após desconexão, operações sequenciais, timeout, serviços bloqueados, importação de UUIDs e exportação. Esses testes não substituem a validação no A56 com o fone real.
 
 Fontes oficiais: [Web Bluetooth no Chrome](https://developer.chrome.com/docs/capabilities/bluetooth) e [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
+
+## Interface 1.1
+
+Conexão priorizada no celular, fonte Inter local, ajuda progressiva, validação de UUID com foco e mensagem no campo, filtros do registro e contagem de notificações recuperada do relatório. Critérios, referências e tokens em DESIGN.md.

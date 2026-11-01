@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BluetoothDiagnostics, importServices, requestedServices, readBytes } from '../docs/core.mjs';
+import { BluetoothDiagnostics, importServices, requestedServices, readBytes, filterSessionEvents } from '../docs/core.mjs';
 
 class Characteristic extends EventTarget {
   constructor(uuid, properties, values = [7]) { super(); Object.assign(this, { uuid, properties, values, writes: 0 }); }
@@ -124,6 +124,25 @@ test('event history is bounded and restores from local storage', () => {
   assert.equal(d.report.droppedEvents, 4);
   const restored = new BluetoothDiagnostics({ storage: { getItem() { return d.json(); } } });
   assert.equal(restored.report.events.at(-1).message, 'Event 1003');
+});
+
+test('restored notification total is preserved even when old events were truncated', async () => {
+  const { diagnostics, events } = fixture();
+  await diagnostics.connect();
+  events.notify([1]); events.notify([2]);
+  const saved = diagnostics.json();
+  const restored = new BluetoothDiagnostics({ storage: { getItem() { return saved; } } });
+  assert.equal(restored.notificationCount, 2);
+  assert.equal(restored.report.notificationCount, 2);
+  diagnostics.disconnect();
+});
+
+test('log filters never discard evidence from exported reports', () => {
+  const d = new BluetoothDiagnostics();
+  d.record('user_marker', 'ANC'); d.record('read', 'Valor'); d.record('read_error', 'Bloqueado');
+  assert.equal(filterSessionEvents(d.report.events, 'markers').length, 1);
+  assert.equal(filterSessionEvents(d.report.events, 'errors').length, 1);
+  assert.equal(JSON.parse(d.json()).events.length, 3);
 });
 
 test('insecure pages and unsupported browsers cannot invoke a Bluetooth request', async () => {
